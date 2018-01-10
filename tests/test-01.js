@@ -17,12 +17,12 @@ const imageName = 'allplan-01';
 	const browser = await puppeteer.launch(config.browserOptions);
 	const page = await browser.newPage();
 
-	for (var viewPort in config.viewPorts) {
+	for (let viewPort in config.viewPorts) {
 	  if (config.viewPorts.hasOwnProperty(viewPort)) {
 
-		var viewPortWidth = config.viewPorts[viewPort].width;
-		var viewPortHeight = config.viewPorts[viewPort].height;
-		var imagePath = config.compareFolders.results + '/' + imageName + '-' + viewPort + '.png';
+		let viewPortWidth = config.viewPorts[viewPort].width;
+		let viewPortHeight = config.viewPorts[viewPort].height;
+		let imagePath = config.compareFolders.results + '/' + imageName + '-' + viewPort + '.png';
 
 		await page.setViewport({ width: viewPortWidth, height: viewPortHeight });
 		await page.goto(config.baseUri);
