@@ -1,0 +1,40 @@
+{
+  "name": "puppeteer-testing",
+  "version": "0.0.1",
+  "description": "Use puppeteer to do a visual testing of webpages in different solutions. This package installs the needed libs and brings some examples. keep in mind to have a look at readme.md and to set up the config.js to your needs!  ",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "looks-same": "^3.3.0",
+    "mkdirp": "^0.5.1",
+    "object.values": "^1.0.4",
+    "puppeteer": "^0.13.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peterbenke/puppeteer-testing.git"
+  },
+  "keywords": [
+    "visual testing",
+    "puppeteer",
+    "nodejs",
+    "screen compare",
+    "phantomjs followup",
+    "chrome headless"
+  ],
+  "author": "P. Benke & J. Velletti",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=6.4.0"
+  },
+  "bugs": {
+    "url": "https://github.com/peterbenke/puppeteer-testing/issues"
+  },
+  "homepage": "https://github.com/peterbenke/puppeteer-testing#readme"
+}
