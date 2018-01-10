@@ -4,7 +4,5 @@ tests/comparisonBase/
 tests/comparisonFailures/
 tests/comparisonResults/
 
-tests/demotest/
+tests/demotest/*
 !tests/demotest/test.js
-
-!.gitignore
