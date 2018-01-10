@@ -9,6 +9,13 @@
     cd ... puppeteer-testing
     npm i puppeteer
     npm i looks-same
+    npm i mkdirp
+    npm i object.values
+    
+  * puppeteer
+  * looks-same: Compare screenshots
+  * mkdirp: Create directories recursive
+  * object.values: Handle objects as arrays
    
 ## First test
 
@@ -26,6 +33,8 @@
 
   * puppeteer:<br>
     https://github.com/GoogleChrome/puppeteer  
+  * puppeteer API:<br>
+    https://github.com/GoogleChrome/puppeteer/blob/master/docs/api.md
   * puppeteer examples:<br>
     https://github.com/checkly/puppeteer-examples
   * Online puppeteer tester:<br> 

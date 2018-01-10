@@ -12,14 +12,7 @@ npm i object.values
 */
 
 
-const config2 = require('./config2');
+const config = require('./config');
 const puppeteer = require('puppeteer');
-config2.init( ) ;
-
-const imageName = 'allplan-01';
-
-config2.createScreenshotsForViewPorts({
-	imageName: 'allplan-01'
-});
-// console.log('Finished...');
+config.init( ) ;
 
