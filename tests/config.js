@@ -35,10 +35,14 @@ module.exports = {
 	 * createScreenshotsForViewPorts
 	 * Create screenshots for all available viewports in defined result folder (compareFolders.results)
 	 * Appends the viewport to the given image name, e.g. 'screenshot-01' => 'screenshot-01-lg.png'
-	 * @param imageName Name of the image (only name without path and file extension, e.g. 'screenshot-01')
-	 * @param page path after baseUri, e.g. 'home.html'
+	 * imageName: Name of the image (only name without path and file extension, e.g. 'screenshot-01')
+	 * pagePath: path after baseUri, e.g. 'home.html'
+	 * @param {!{imageName:string, pagePath:string}=} options
 	 */
-	createScreenshotsForViewPorts: function(imageName, pagePath){
+	createScreenshotsForViewPorts: function(options = {}){
+
+		const imageName = 'imageName' in options ? options.imageName : 'test';
+		const pagePath = 'pagePath' in options ? options.pagePath : '';
 
 		const puppeteer = require('puppeteer');
 
@@ -66,7 +70,7 @@ module.exports = {
 
 					console.log('Create screenshot: ' + imagePath);
 
-					// console.log('uri:' + uri);
+					console.log('uri:' + uri);
 					// console.log('viewPort:' + viewPort);
 					// console.log('viewPortWidth: ' + viewPortWidth);
 					// console.log('viewPortHeight: ' + viewPortHeight);
@@ -98,7 +102,7 @@ module.exports = {
 	 * @param {!{path:string, selector:string, padding:(number|undefined)}=} opts
 	 * @return {!Promise<!Buffer>}
 	 */
-
+/*
 	screenshotDOMElement: function(page, opts = {}){
 	// async function screenshotDOMElement(page, opts = {}) {
 
@@ -134,7 +138,7 @@ module.exports = {
 		});
 
 	}
-
+*/
 
 
 

@@ -6,7 +6,7 @@
 
 ## Installation
 
-    cd ... www.allplan.com/testing/puppeteer
+    cd ... puppeteer-testing
     npm i puppeteer
     npm i looks-same
    
