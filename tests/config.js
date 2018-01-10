@@ -54,27 +54,31 @@ module.exports = {
 				const page = await browser.newPage();
 
 				// Loop through the defined viewports
-				for (var viewPort in this.viewPorts) {
+				for (let viewPort in this.viewPorts) {
 
-					var viewPortWidth = this.viewPorts[viewPort].width;
-					var viewPortHeight = this.viewPorts[viewPort].height;
-					var imagePath = this.compareFolders.results + '/' + imageName + '-' + viewPort + '.png';
-					var uri = this.baseUri;
-					if(pagePath != ''){
-						uri += pagePath;
+					if (this.viewPorts.hasOwnProperty(viewPort)) {
+
+						let viewPortWidth = this.viewPorts[viewPort].width;
+						let viewPortHeight = this.viewPorts[viewPort].height;
+						let imagePath = this.compareFolders.results + '/' + imageName + '-' + viewPort + '.png';
+						let uri = this.baseUri;
+						if(pagePath !== ''){
+							uri += pagePath;
+						}
+
+						await page.setViewport({ width: viewPortWidth, height: viewPortHeight });
+						await page.goto(uri);
+						await page.screenshot({path: imagePath});
+
+						console.log('Create screenshot: ' + imagePath);
+
+						console.log('uri:' + uri);
+						// console.log('viewPort:' + viewPort);
+						// console.log('viewPortWidth: ' + viewPortWidth);
+						// console.log('viewPortHeight: ' + viewPortHeight);
+						// console.log('imagePath:' + imagePath);
+
 					}
-
-					await page.setViewport({ width: viewPortWidth, height: viewPortHeight });
-					await page.goto(uri);
-					await page.screenshot({path: imagePath});
-
-					console.log('Create screenshot: ' + imagePath);
-
-					console.log('uri:' + uri);
-					// console.log('viewPort:' + viewPort);
-					// console.log('viewPortWidth: ' + viewPortWidth);
-					// console.log('viewPortHeight: ' + viewPortHeight);
-					// console.log('imagePath:' + imagePath);
 
 				}
 
