@@ -11,6 +11,7 @@
     npm i looks-same
     npm i mkdirp
     npm i object.values
+    npm i fs
     
   * puppeteer
   * looks-same: Compare screenshots
