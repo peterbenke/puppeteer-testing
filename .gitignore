@@ -1,6 +1,8 @@
 .idea
 
-01-local-tests/
+config_local.js
+
+gitignore
 node_modules/
 
 tests/comparisonBase/
