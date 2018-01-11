@@ -15,7 +15,7 @@ module.exports = {
 
 	compareFolders: {
 		base: 'comparisonBase',
-		failue: 'comparisonFailure',
+		failure: 'comparisonFailure',
 		results: 'comparisonResults'
 	},
 
@@ -74,13 +74,25 @@ module.exports = {
 
 		// Create folders
 		mkdirp(this.compareFolderRoot.basePath, function (err) {
-			if (err) console.error(err)
+			if (err) {
+			    console.error("problem during creating Base Folder : " + this.compareFolderRoot.basePath + ")\n ") ;
+
+                console.error(err)
+                process.exit() ;
+			}
 		});
 		let folders = values(this.compareFolders) ;
-		console.log(folders) ;
+		if ( this.debugLevel > 1 ) {
+		    console.log(folders) ;
+		}
 		for (let i in folders )  {
 			mkdirp( this.compareFolderRoot.basePath + "/" + folders[i] , function (err) {
-				if (err) console.error(err)
+				if (err) {
+				    console.error("problem during creating Subfolders to : " + this.compareFolderRoot.basePath + ")\n ") ;
+
+				    console.error(err)
+				    process.exit() ;
+				}
 			});
 		}
 
