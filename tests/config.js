@@ -1,5 +1,8 @@
 module.exports = {
 
+    // 0 = no Output, only errors , 1 = normal Output , 2 = full
+    debugLevel: 1,
+
 	baseUri: 'https://allplan.local/',
 
 	browserOptions: {
@@ -40,8 +43,31 @@ module.exports = {
 	 */
 	init: function() {
 
-		console.log("Initialize project ... ") ;
-		console.log("First create folders, if not exist ... see: " + this.compareFolderRoot.basePath) ;
+		if ( this.debugLevel > 0  ) {
+            console.log("\nInitialising Project ... ") ;
+        }
+
+        // Overwrite some of the default Config values that will different on a local, dev, test, build server.
+        let fs = require('fs');
+        try {
+             fs.accessSync('./config_local.js', fs.constants.R_OK | fs.constants.W_OK);
+
+             const confLocal = require('./config_local');
+             this.compareFolderRoot.basePath = confLocal.compareFolderRoot.basePath ;
+             this.debugLevel                 = confLocal.debugLevel ;
+             this.baseUri                    = confLocal.baseUri;
+             this.browserOptions             = confLocal.browserOptions ;
+
+        } catch (err) {
+            console.error('\n.......................................................\n');
+            console.error('The file ./config_local does not exist! \nCopy the File ./config_example.js to ./config_local and adjust it to your needs.');
+            console.error('.........................................................\n\n');
+            process.exit() ;
+        }
+
+        if ( this.debugLevel > 1 ) {
+            console.log("First Create Folders (if not exist) ... See: " + this.compareFolderRoot.basePath + "\n(the compareFolderRoot.basepath should be defined in config_local.js)\n ") ;
+        }
 
 		const mkdirp = require('mkdirp');
 		const values = require('object.values');
