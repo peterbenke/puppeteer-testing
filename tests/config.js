@@ -234,13 +234,14 @@ module.exports = {
 							if(pagePath !== ''){
 								uri += pagePath;
 							}
-
-							// console.log('uri:' + uri);
-							// console.log('viewPort:' + viewPort);
-							// console.log('viewPortWidth: ' + viewPortWidth);
-							// console.log('viewPortHeight: ' + viewPortHeight);
-							// console.log('imagePath:' + imagePath);
-							// console.log('styleDefinitions:' + styleDefinitions);
+							if (this.debugLevel >= 2)  {
+								console.log('uri:' + uri);
+								console.log('viewPort:' + viewPort);
+								console.log('viewPortWidth: ' + viewPortWidth);
+								console.log('viewPortHeight: ' + viewPortHeight);
+								console.log('imagePath:' + imagePath);
+								console.log('styleDefinitions:' + styleDefinitions);
+							}
 
 							await page.setViewport({ width: viewPortWidth, height: viewPortHeight });
 							await page.goto(uri);
@@ -315,13 +316,14 @@ module.exports = {
 						await page.goto(uri);
 						await page.screenshot({path: imagePath});
 
-						console.log('Create screenshot: ' + imagePath);
-
-						console.log('uri:' + uri);
-						// console.log('viewPort:' + viewPort);
-						// console.log('viewPortWidth: ' + viewPortWidth);
-						// console.log('viewPortHeight: ' + viewPortHeight);
-						// console.log('imagePath:' + imagePath);
+						if (this.debugLevel >= 2) {
+							console.log('Create screenshot: ' + imagePath);
+							console.log('uri:' + uri);
+							console.log('viewPort:' + viewPort);
+							console.log('viewPortWidth: ' + viewPortWidth);
+							console.log('viewPortHeight: ' + viewPortHeight);
+							console.log('imagePath:' + imagePath);
+						}
 
 					}
 
