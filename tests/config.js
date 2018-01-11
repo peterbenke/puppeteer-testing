@@ -437,6 +437,53 @@ module.exports = {
 
         })();
 
-    }
+    },
+
+	/**
+	 * removeElementByIdFromDom
+	 * Removes an element from DOM by its id
+	 * @param  {Promise} page
+	 * @param {Object} options
+	 * string element: selector, e.g. 'content' (without '#')
+	 * @returns {*}
+	 */
+	removeElementByIdFromDom: function(page, options = {}){
+
+		const element = 'element' in options ? options.element : '';
+
+		try{
+
+			return Promise.all([
+
+				(async () => {
+
+					const jsdom = require('jsdom');
+					const { JSDOM } = jsdom;
+
+					// Get the current page content
+					let pageContent = await page.content();
+
+					// Create document (npm module 'jsdom')
+					const { document } = (new JSDOM(pageContent)).window;
+
+					let node = document.getElementById(element);
+					if (node.parentNode) {
+						node.parentNode.removeChild(node);
+					}
+
+					await page.setContent(document.documentElement.innerHTML);
+					await page.waitForSelector('body');
+
+				})()
+
+			]);
+
+		}catch(e){
+
+			console.log(e);
+
+		}
+
+	}
 
 };
