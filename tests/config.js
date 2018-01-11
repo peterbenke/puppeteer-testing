@@ -257,7 +257,7 @@ module.exports = {
 								selector: selector,
 								padding: padding
 							});
-
+                            await this.compareImages( { imageName:  imageName + '-' + viewPort + '.png' ,  tolerance: '2.5' , highlightColor: '#FF00FF' }) ;
 						}
 
 					}
@@ -324,7 +324,7 @@ module.exports = {
 							console.log('viewPortHeight: ' + viewPortHeight);
 							console.log('imagePath:' + imagePath);
 						}
-
+                        await this.compareImages( { imageName:  imageName + '-' + viewPort + '.png' ,  tolerance: '2.5' , highlightColor: '#FF00FF' }) ;
 					}
 
 				}
@@ -345,12 +345,11 @@ module.exports = {
 
 	/**
 	 * compareImages
-	 * @param  {Class} fs
      * @param {Object} options
 	 * imageName: Name of the image (only name without path , e.g. 'screenshot-01.png')
 	 * @param {!{imageName:string}=} options
 	 */
-    compareImages: function(fs , options = {}) {
+    compareImages: function( options = {}) {
 
         const imageName = 'imageName' in options ? options.imageName : 'test';
         const tolerance = 'tolerance' in options ? options.tolerance : '2.5';
@@ -360,9 +359,11 @@ module.exports = {
             try{
 
                 let imageBase    = this.compareFolderRoot.basePath + "/" + this.compareFolders.base + "/" + imageName;
+
                 let imageResult  = this.compareFolderRoot.basePath + "/" + this.compareFolders.results + "/" + imageName;
                 let imageFailure  = this.compareFolderRoot.basePath + "/" + this.compareFolders.failure + "/" + imageName;
 
+                const fs = require('fs');
                 // FIRST we do some Checks/setups , removing old errors Image and creating a new Base Image, if it does not exist ..
                 try {
                     if ( this.debugLevel > 1 ) {

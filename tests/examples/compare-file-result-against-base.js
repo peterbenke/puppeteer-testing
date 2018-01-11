@@ -20,6 +20,6 @@ Steps to use and understand this test
 
 const config = require('../config');
 const puppeteer = require('puppeteer');
-const fs = require('fs');
+
 config.init( ) ;
-config.compareImages( fs , { imageName: 'test-555-lg.png',  tolerance: '2.5' , highlightColor: '#FF00FF' }) ;
+config.compareImages( { imageName: 'test-555-lg.png',  tolerance: '2.5' , highlightColor: '#FF00FF' }) ;

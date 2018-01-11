@@ -19,12 +19,13 @@ const puppeteer = require('puppeteer');
 		{
 			pagePath: 'index.php?id=143',
 			selector: '#c161',
-			imageName: 'test-555',
+			imageName: 'test-jv-001',
 			styleDefinitions: '#tx_cookies{ display:none; }'
 		}
 	);
 
 	await browser.close();
+
 	console.log('Finished...');
 
 })();
