@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "fs": "0.0.1-security",
+    "jsdom": "^11.5.1",
     "looks-same": "^3.3.0",
     "mkdirp": "^0.5.1",
     "object.values": "^1.0.4",
