@@ -15,7 +15,7 @@ module.exports = {
 
 	compareFolders: {
 		base: 'comparisonBase',
-		failue: 'comparisonFailure',
+		failure: 'comparisonFailure',
 		results: 'comparisonResults'
 	},
 
@@ -74,13 +74,25 @@ module.exports = {
 
 		// Create folders
 		mkdirp(this.compareFolderRoot.basePath, function (err) {
-			if (err) console.error(err)
+			if (err) {
+			    console.error("problem during creating Base Folder : " + this.compareFolderRoot.basePath + ")\n ") ;
+
+                console.error(err)
+                process.exit() ;
+			}
 		});
 		let folders = values(this.compareFolders) ;
-		console.log(folders) ;
+		if ( this.debugLevel > 1 ) {
+		    console.log(folders) ;
+		}
 		for (let i in folders )  {
 			mkdirp( this.compareFolderRoot.basePath + "/" + folders[i] , function (err) {
-				if (err) console.error(err)
+				if (err) {
+				    console.error("problem during creating Subfolders to : " + this.compareFolderRoot.basePath + ")\n ") ;
+
+				    console.error(err)
+				    process.exit() ;
+				}
 			});
 		}
 
@@ -329,7 +341,101 @@ module.exports = {
 
 		})();
 
-	}
+	},
 
+	/**
+	 * compareImages
+	 * @param  {Class} fs
+     * @param {Object} options
+	 * imageName: Name of the image (only name without path , e.g. 'screenshot-01.png')
+	 * @param {!{imageName:string}=} options
+	 */
+    compareImages: function(fs , options = {}) {
+
+        const imageName = 'imageName' in options ? options.imageName : 'test';
+        const tolerance = 'tolerance' in options ? options.tolerance : '2.5';
+        const highlightColor = 'highlightColor' in options ? options.highlightColor : '#FF00FF';
+        (async () => {
+
+            try{
+
+                let imageBase    = this.compareFolderRoot.basePath + "/" + this.compareFolders.base + "/" + imageName;
+                let imageResult  = this.compareFolderRoot.basePath + "/" + this.compareFolders.results + "/" + imageName;
+                let imageFailure  = this.compareFolderRoot.basePath + "/" + this.compareFolders.failure + "/" + imageName;
+
+                // FIRST we do some Checks/setups , removing old errors Image and creating a new Base Image, if it does not exist ..
+                try {
+                    if ( this.debugLevel > 1 ) {
+                        console.log('Does the Result file ' + imageResult + '  exist?  ');
+                    }
+                     fs.accessSync( imageResult , fs.constants.R_OK | fs.constants.W_OK);
+
+                } catch (err) {
+                    console.error('\n.......................................................\n');
+                    console.error('The Result file ' + imageResult + ' does not exist! Can Not Compare files ');
+                    console.error('.........................................................\n\n');
+                    process.exit() ;
+                }
+
+                try {
+                    if ( this.debugLevel > 1 ) {
+                        console.log('Does the Base file ' + imageBase + '  exist?  ');
+                    }
+                     fs.accessSync( imageBase , fs.constants.R_OK | fs.constants.W_OK);
+
+                } catch (err) {
+                    fs.writeFileSync(imageBase, fs.readFileSync(imageResult));
+                     if ( this.debugLevel > 0 ) {
+                         console.error('\n.......................................................\n');
+                         console.error('The Base file ' + imageBase + ' was  copied from Result! ');
+                         console.error('.........................................................\n\n');
+                     }
+                }
+                try {
+                    if ( this.debugLevel > 1 ) {
+                        console.log('Does an old Failure file ' + imageFailure + '  exist?  ');
+                    }
+                     fs.accessSync( imageFailure ,  fs.constants.W_OK);
+                     fs.unlinkSync(imageFailure)
+
+                } catch (err) {
+
+                }
+                // END of some Checks/setups , removing old errors Image and creating a new Base Image, if it does not exist ..
+
+                let looksSame = require('looks-same');
+
+                looksSame(imageBase, imageResult , {tolerance: tolerance, highlightColor: highlightColor} , function(error, equal) {
+                    //equal will be true, if images looks the same
+                    if ( equal === false ) {
+                        console.log('equal:' + equal);
+                        looksSame.createDiff({
+                            reference: imageBase ,
+                            current: imageResult ,
+                            diff: imageFailure ,
+                            highlightColor: highlightColor,  // color to highlight the differences
+                            strict: false,                  // strict comparsion
+                            tolerance: tolerance
+                        }, function(error) {
+                            console.log('Result:' + imageFailure);
+                        });
+                    } else {
+                        if ( this.debugLevel > 0 ) {
+                            console.log('equal:' + equal);
+                        }
+                    }
+                });
+
+            } catch(error){
+
+                console.log('*** Error! ***');
+                console.log('Message: ' + JSON.stringify(error));
+                process.exit();
+
+            }
+
+        })();
+
+    }
 
 };
