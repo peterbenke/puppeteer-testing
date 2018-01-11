@@ -1,4 +1,6 @@
 .idea
+
+01-local-tests/
 node_modules/
 
 tests/comparisonBase/
