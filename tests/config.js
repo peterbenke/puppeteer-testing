@@ -463,6 +463,14 @@ module.exports = {
 
 		const element = 'element' in options ? options.element : '';
 
+		if (!element){
+			// throw Error('Please provide an element to replace');
+			console.error('.......................................................');
+			console.error('Error: Please provide an element to remove');
+			console.error('.......................................................');
+			process.exit();
+		}
+
 		try{
 
 			return Promise.all([
@@ -492,7 +500,66 @@ module.exports = {
 
 		}catch(e){
 
-			console.log(e);
+			console.error(e);
+
+		}
+
+	},
+
+	/**
+	 * replaceElementByIdWithElement
+	 * Removes an element from DOM by its id
+	 * @param  {Promise} page
+	 * @param {Object} options
+	 * @returns {*}
+	 */
+	replaceElementByIdWithElement: function(page, options = {}){
+
+		const elementToReplace = options.elementToReplace;
+		const newElementTag = 'newElementTag' in options ? options.newElementTag : 'div';
+		const newElementContent = 'newElementContent' in options ? options.newElementContent : '';
+
+		if (!elementToReplace){
+			// throw Error('Please provide an element to replace');
+			console.error('.......................................................');
+			console.error('Error: Please provide an element to replace');
+			console.error('.......................................................');
+			process.exit();
+		}
+
+		try{
+
+			return Promise.all([
+
+				(async () => {
+
+					const jsdom = require('jsdom');
+					const { JSDOM } = jsdom;
+
+					// Get the current page content
+					let pageContent = await page.content();
+
+					// Create document (npm module 'jsdom')
+					const { document } = (new JSDOM(pageContent)).window;
+
+					let newElement = document.createElement(newElementTag);
+					newElement.innerHTML = newElementContent;
+
+					let node = document.getElementById(elementToReplace);
+					if (node.parentNode) {
+						node.parentNode.replaceChild(newElement, node);
+					}
+
+					await page.setContent(document.documentElement.innerHTML);
+					await page.waitForSelector('body');
+
+				})()
+
+			]);
+
+		}catch(e){
+
+			console.error(e);
 
 		}
 
