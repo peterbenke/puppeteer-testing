@@ -1,5 +1,6 @@
 module.exports = {
 
+    // +++ part one ***** will be overwriten by definitions from config_local.js (a copy from config_example.js)
     // 0 = no Output, only errors , 1 = normal Output , 2 = full
     debugLevel: 1,
 
@@ -12,6 +13,11 @@ module.exports = {
 	compareFolderRoot: {
 		basePath: '../path-you-want/http/images'
 	},
+    // --- part one *****
+
+
+
+    // +++ part two ***** some project specific settings
 
 	compareFolders: {
 		base: 'comparisonBase',
@@ -37,9 +43,15 @@ module.exports = {
 			height: 1000
 		}
 	},
+    // --- part two
+
+
+    // +++ part three  ***** some usefull functions
 
 	/**
 	 * Init functions
+	 * Generates needed Folders if not exist
+	 * needs a config_local.js that overwrites some basic values.
 	 */
 	init: function() {
 
