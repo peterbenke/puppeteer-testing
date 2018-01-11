@@ -4,7 +4,7 @@ Example fill form and submit
 
 */
 
-const config = require('./config');
+const config = require('../config');
 
 const puppeteer = require('puppeteer');
 const imageName = 'allplan-powermail';

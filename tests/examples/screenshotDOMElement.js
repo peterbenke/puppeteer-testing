@@ -4,7 +4,7 @@ Example screenshotDOMElement
 
 */
 
-const config = require('./config');
+const config = require('../config');
 const puppeteer = require('puppeteer');
 
 
