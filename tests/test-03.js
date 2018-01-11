@@ -19,12 +19,21 @@ const pagePath = 'index.php?id=143';
 	const browser = await puppeteer.launch(config.browserOptions);
 	const page = await browser.newPage();
 
-	console.log(page);
-	process.exit();
+	// console.log(page);
+	// process.exit();
+
+	// config.testfunction(page);
 
 
-	await page.setViewport({ width: 1800, height: 1000 });
-	await page.goto(config.baseUri + pagePath);
+	config.testfunction().then(function () {
+		console.log("Promise Resolved");
+	}).catch(function () {
+		console.log("Promise Rejected");
+	});
+
+
+	// ################## await page.setViewport({ width: 1800, height: 1000 });
+	// ################## await page.goto(config.baseUri + pagePath);
 
 	/**
 	 * Takes a screenshot of a DOM element on the page, with optional padding.
@@ -62,18 +71,16 @@ const pagePath = 'index.php?id=143';
 			}
 		});
 	}
-*/
+
 
 	await screenshotDOMElement({
 		path: 'comparisonResults/test-01.png',
 		selector: '#c161'
 	});
+*/
 
-	// await page.screenshot({path: 'comparisonResults/test-01.png'});
 
 
-	// Result image (to caompare with base image)
-	// await page.screenshot({path: config.compareFolders.results + '/allplan-07.png'});
 	await browser.close();
 
 	console.log('Finished...');
