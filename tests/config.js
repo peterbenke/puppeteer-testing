@@ -121,6 +121,123 @@ module.exports = {
 
 	},
 
+
+	/**
+	 * createScreenshotsDOMElementForViewPorts
+	 * Create screenshots for all available viewports in defined result folder (this.compareFolderRoot.basePath + '/' + this.compareFolders.results)
+	 * Appends the viewport to the given image name, e.g. 'screenshot-01' => 'screenshot-01-lg.png'
+	 * @param  {Promise} page
+	 * @param {Object} options
+	 * string pagePath: Path to the page, e.g. 'home.html' (without baseUri)
+	 * string selector: Selector on the page, e.g. '#content'
+	 * string imageName: Name of the image, without path and file-extension
+	 * string styleDefinitions: Additional style definitions, e.g. '#header{ display:none; }'
+	 * int    padding: Number of pixels inside the screenshot
+	 * @returns {*}
+	 */
+	createScreenshotsDOMElementForViewPorts: function(page, options = {}){
+
+		const pagePath = 'pagePath' in options ? options.pagePath : '';
+		const selector = options.selector;
+		const imageName = 'imageName' in options ? options.imageName : 'test';
+		const styleDefinitions = 'styleDefinitions' in options ? options.styleDefinitions : '';
+		const padding = 'padding' in options ? options.padding : 0;
+
+		try{
+
+			return Promise.all([
+
+				(async () => {
+
+					async function screenshotDOMElement(opts = {}) {
+
+						let path = 'path' in opts ? opts.path : null;
+						let selector = opts.selector;
+						let padding = 'padding' in opts ? opts.padding : 0;
+
+						if (!selector){
+							throw Error('Please provide a selector.');
+						}
+
+						let rect = await page.evaluate(selector => {
+							let element = document.querySelector(selector);
+							if (!element){
+								return null;
+							}
+							let {x, y, width, height} = element.getBoundingClientRect();
+							return {left: x, top: y, width, height, id: element.id};
+						}, selector);
+
+						if (!rect){
+							throw Error(`Could not find element that matches selector: ${selector}.`);
+						}
+
+						return await page.screenshot({
+							path,
+							clip: {
+								x: rect.left - padding,
+								y: rect.top - padding,
+								width: rect.width + padding * 2,
+								height: rect.height + padding * 2
+							}
+						});
+					}
+
+
+					// Loop through the defined viewports
+					for (let viewPort in this.viewPorts) {
+
+						if (this.viewPorts.hasOwnProperty(viewPort)) {
+
+							let viewPortWidth = this.viewPorts[viewPort].width;
+							let viewPortHeight = this.viewPorts[viewPort].height;
+							let imagePath = this.compareFolderRoot.basePath + '/' + this.compareFolders.results + '/' + imageName + '-' + viewPort + '.png';
+							let uri = this.baseUri;
+							if(pagePath !== ''){
+								uri += pagePath;
+							}
+
+							// console.log('uri:' + uri);
+							// console.log('viewPort:' + viewPort);
+							// console.log('viewPortWidth: ' + viewPortWidth);
+							// console.log('viewPortHeight: ' + viewPortHeight);
+							// console.log('imagePath:' + imagePath);
+							// console.log('styleDefinitions:' + styleDefinitions);
+
+							await page.setViewport({ width: viewPortWidth, height: viewPortHeight });
+							await page.goto(uri);
+
+							// Set styles, if exist
+							if(styleDefinitions !== ''){
+								await page.addStyleTag({content: styleDefinitions});
+							}
+
+							// And shot
+							await screenshotDOMElement({
+								path: imagePath,
+								selector: selector,
+								padding: padding
+							});
+
+						}
+
+					}
+
+
+				})()
+
+			]);
+
+
+		}catch(e){
+
+			console.log(e);
+
+		}
+
+	},
+
+
 	/**
 	 * createScreenshotsForViewPorts
 	 * Create screenshots for all available viewports in defined result folder (compareFolders.results)
