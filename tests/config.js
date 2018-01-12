@@ -192,6 +192,7 @@ module.exports = {
 		const imageName = 'imageName' in options ? options.imageName : 'test';
 		const styleDefinitions = 'styleDefinitions' in options ? options.styleDefinitions : '';
 		const padding = 'padding' in options ? options.padding : 0;
+		const replaceDomElements = 'replaceDomElements' in options ? options.replaceDomElements : false ;
 
 		try{
 
@@ -200,37 +201,43 @@ module.exports = {
 				(async () => {
 
 					async function screenshotDOMElement(opts = {}) {
+                        try{
+                            let path = 'path' in opts ? opts.path : null;
+                            let selector = opts.selector;
+                            let padding = 'padding' in opts ? opts.padding : 0;
 
-						let path = 'path' in opts ? opts.path : null;
-						let selector = opts.selector;
-						let padding = 'padding' in opts ? opts.padding : 0;
+                            if (!selector){
+                                throw Error('Please provide a selector.');
+                            }
 
-						if (!selector){
-							throw Error('Please provide a selector.');
-						}
 
-						let rect = await page.evaluate(selector => {
-							let element = document.querySelector(selector);
-							if (!element){
-								return null;
-							}
-							let {x, y, width, height} = element.getBoundingClientRect();
-							return {left: x, top: y, width, height, id: element.id};
-						}, selector);
+                            let rect = await page.evaluate(selector => {
+                                let element = document.querySelector(selector);
+                                if (!element){
+                                    return null;
+                                }
+                                let {x, y, width, height} = element.getBoundingClientRect();
+                                return {left: x, top: y, width, height, id: element.id};
+                            }, selector);
 
-						if (!rect){
-							throw Error(`Could not find element that matches selector: ${selector}.`);
-						}
+                            if (!rect){
+                                throw Error('Page ' + path + ': Could not find element that matches selector: ${ ' + selector + '}.');
 
-						return await page.screenshot({
-							path,
-							clip: {
-								x: rect.left - padding,
-								y: rect.top - padding,
-								width: rect.width + padding * 2,
-								height: rect.height + padding * 2
-							}
-						});
+                            }
+
+                            return await page.screenshot({
+                                path,
+                                clip: {
+                                    x: rect.left - padding,
+                                    y: rect.top - padding,
+                                    width: rect.width + padding * 2,
+                                    height: rect.height + padding * 2
+                                }
+                            });
+                        }catch(err) {
+                            console.log(err);
+                            process.exit() ;
+                        };
 					}
 
 
@@ -262,6 +269,24 @@ module.exports = {
 							if(styleDefinitions !== ''){
 								await page.addStyleTag({content: styleDefinitions});
 							}
+                            if (replaceDomElements ) {
+                                const values = require('object.values') ;
+                                let allReplacements = values(replaceDomElements) ;
+                                for (let i in allReplacements )  {
+                                    if (this.debugLevel >= 2)  {
+                                        console.log( "\nReplacment:" , allReplacements[i] , "\n" ) ;
+                                    }
+                                    await this.replaceElementsBySelectorWithElement (
+                                        page,
+                                        {
+                                            elementToReplace: allReplacements[i].elementToReplace,
+                                            newElementTag: allReplacements[i].newElementTag,
+                                            newElementContent: allReplacements[i].newElementContent ,
+                                        }
+                                    );
+                                }
+
+                            }
 
 							// And shot
 							await screenshotDOMElement({
@@ -563,6 +588,81 @@ module.exports = {
 
 		}
 
-	}
+	},
+
+	/**
+     * replaceElementsBySelectordWithElement
+     * Replaces any element from DOM by its selector with some stuff ( an HTML tag with or without content, or just text content )
+     * @param  {Promise} page
+     * @param {Object} options
+     * @returns {*}
+     */
+    replaceElementsBySelectorWithElement: function(page, options = {}){
+
+        const elementToReplace = options.elementToReplace;
+        const newElementTag = 'newElementTag' in options ? options.newElementTag : false ;
+        const newElementContent = 'newElementContent' in options ? options.newElementContent : '';
+
+        if (!elementToReplace){
+            // throw Error('Please provide an element to replace');
+            console.error('.......................................................');
+            console.error('Error: Please provide an element to replace');
+            console.error('.......................................................');
+            process.exit();
+        }
+
+        try{
+
+            return Promise.all([
+
+                (async () => {
+                    try{
+                        const jsdom = require('jsdom');
+                        const { JSDOM } = jsdom;
+
+                        // Get the current page content
+                        let pageContent = await page.content();
+
+                        // Create document (npm module 'jsdom')
+                        const { document } = (new JSDOM(pageContent)).window;
+                        let replaceText = newElementContent ;
+                        if ( newElementTag ) {
+                            let newElement = document.createElement(newElementTag);
+                            newElement.innerHTML = newElementContent;
+                            replaceText = newElement.outerHTML ;
+                        }
+
+
+                        // let node = document.getElementById(elementToReplace);
+                        let matches = document.querySelectorAll( elementToReplace);
+                        for (i=0; i<matches.length; i++) {
+                            if( matches[i].parentNode ) {
+                                if (this.debugLevel >= 2)  {
+                                    console.log( "Element " + elementToReplace + " found and replaced") ;
+                                    console.log( "Before: " + matches[i].innerHTML ) ;
+                                    console.log( "After: " + replaceText ) ;
+                                }
+                                matches[i].innerHTML = replaceText  ;
+
+                            }
+                        }
+
+
+                        await page.setContent(document.documentElement.innerHTML);
+                        await page.waitForSelector('body');
+                    }catch(err) {
+                        console.log(err) ;
+                    }
+                })()
+
+            ]);
+
+        }catch(e){
+
+            console.error(e);
+
+        }
+
+    }
 
 };
