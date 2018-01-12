@@ -74,7 +74,7 @@ module.exports = {
             console.error('\n.......................................................\n');
             console.error('The file ./config_local does not exist! \nCopy the File ./config_example.js to ./config_local and adjust it to your needs.');
             console.error('.........................................................\n\n');
-            process.exit() ;
+            process.exit(1) ;
         }
 
         if ( this.debugLevel > 1 ) {
@@ -90,7 +90,7 @@ module.exports = {
 			    console.error("problem during creating Base Folder : " + this.compareFolderRoot.basePath + ")\n ") ;
 
                 console.error(err)
-                process.exit() ;
+                process.exit(1) ;
 			}
 		});
 		let folders = values(this.compareFolders) ;
@@ -103,7 +103,7 @@ module.exports = {
 				    console.error("problem during creating Subfolders to : " + this.compareFolderRoot.basePath + ")\n ") ;
 
 				    console.error(err)
-				    process.exit() ;
+				    process.exit(1) ;
 				}
 			});
 		}
@@ -236,7 +236,7 @@ module.exports = {
                             });
                         }catch(err) {
                             console.log(err);
-                            process.exit() ;
+                            process.exit(1) ;
                         };
 					}
 
@@ -372,7 +372,7 @@ module.exports = {
 
 				console.log('*** Error! ***');
 				console.log('Message: ' + JSON.stringify(error));
-				process.exit();
+				process.exit(1);
 
 			}
 
@@ -412,7 +412,7 @@ module.exports = {
                     console.error('\n.......................................................\n');
                     console.error('The Result file ' + imageResult + ' does not exist! Can Not Compare files ');
                     console.error('.........................................................\n\n');
-                    process.exit() ;
+                    process.exit(1) ;
                 }
 
                 try {
@@ -468,7 +468,7 @@ module.exports = {
 
                 console.log('*** Error! ***');
                 console.log('Message: ' + JSON.stringify(error));
-                process.exit();
+                process.exit(1);
 
             }
 
@@ -493,7 +493,7 @@ module.exports = {
 			console.error('.......................................................');
 			console.error('Error: Please provide an element to remove');
 			console.error('.......................................................');
-			process.exit();
+			process.exit(1);
 		}
 
 		try{
@@ -549,7 +549,7 @@ module.exports = {
 			console.error('.......................................................');
 			console.error('Error: Please provide an element to replace');
 			console.error('.......................................................');
-			process.exit();
+			process.exit(1);
 		}
 
 		try{
@@ -608,7 +608,7 @@ module.exports = {
             console.error('.......................................................');
             console.error('Error: Please provide an element to replace');
             console.error('.......................................................');
-            process.exit();
+            process.exit(1);
         }
 
         try{
