@@ -14,6 +14,10 @@ const testsArray = require('./allplan-tests');
 
 	await config.init();
 
+        // config.baseUri = 'https:/allplan.local/' ;
+        // config.debugLevel = 1 ;
+
+
 	const browser = await puppeteer.launch(config.browserOptions);
 	const page = await browser.newPage();
 	let allTests = values(testsArray) ;

@@ -4,20 +4,7 @@
 // change config_local.TestSuiteFile from testsuite_example.js to  testsuite.js
 
 module.exports = {
-   Conntest01: {
-            pagePath: 'register.html',
-            selector: '#mainContent',
-            imageName: "Conn-test-01" ,
-            styleDefinitions: 'body #cookiePolicyBar{ width:0; overflow:hidden ; height: 0 ;}  .invisibleInTest { display:none; } ',
-            replaceDomElements: {
-                             r001:   {
-                                     elementToReplace: '.tx-srfreecap-pi1-image',
-                                     newElementTag: 'div',
-                                     newElementContent: 'captcha',
-                                 },
 
-            },
-        },
     Conntest02: {
             pagePath: 'register.html',
             selector: '#mainContent',
@@ -34,6 +21,11 @@ module.exports = {
                          newElementTag: 'div',
                          newElementContent: '<br />',
                      },
+                 r003:   {
+                          elementToReplace: '#cookiePolicyBar',
+                          newElementTag: '',
+                          newElementContent: '<br />',
+                      },
 
         },
     }

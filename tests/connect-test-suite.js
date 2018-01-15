@@ -13,8 +13,8 @@ const testsArray = require('./connect-tests');
 (async () => {
 
 	await config.init();
-    config.baseUri = 'https:/connect.local/' ;
-    config.debugLevel = 2 ;
+    // config.baseUri = 'https:/connect.local/' ;
+    // config.debugLevel = 1 ;
 
 	const browser = await puppeteer.launch(config.browserOptions);
 	const page = await browser.newPage();

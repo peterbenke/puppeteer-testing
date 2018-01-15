@@ -263,7 +263,10 @@ module.exports = {
 							}
 
 							await page.setViewport({ width: viewPortWidth, height: viewPortHeight });
-							await page.goto(uri);
+							await page.goto(uri, {
+                              timeout: 5000,
+                              waitUntil: [ 'load'],
+                            });
 
 							// Set styles, if exist
 							if(styleDefinitions !== ''){
@@ -274,8 +277,9 @@ module.exports = {
                                 let allReplacements = values(replaceDomElements) ;
                                 for (let i in allReplacements )  {
                                     if (this.debugLevel >= 2)  {
-                                        console.log( "\nReplacment:" , allReplacements[i] , "\n" ) ;
+                                        console.log( "\n\nReplacment:" , allReplacements[i] , "\n" ) ;
                                     }
+                                    await page.waitForSelector(allReplacements[i].elementToReplace);
                                     await this.replaceElementsBySelectorWithElement (
                                         page,
                                         {
@@ -621,35 +625,69 @@ module.exports = {
                         const { JSDOM } = jsdom;
 
                         // Get the current page content
-                        let pageContent = await page.content();
-
-                        // Create document (npm module 'jsdom')
-                        const { document } = (new JSDOM(pageContent)).window;
-                        let replaceText = newElementContent ;
-                        if ( newElementTag ) {
-                            let newElement = document.createElement(newElementTag);
-                            newElement.innerHTML = newElementContent;
-                            replaceText = newElement.outerHTML ;
-                        }
 
 
-                        // let node = document.getElementById(elementToReplace);
-                        let matches = document.querySelectorAll( elementToReplace);
-                        for (i=0; i<matches.length; i++) {
-                            if( matches[i].parentNode ) {
-                                if (this.debugLevel >= 2)  {
-                                    console.log( "Element " + elementToReplace + " found and replaced") ;
-                                    console.log( "Before: " + matches[i].innerHTML ) ;
-                                    console.log( "After: " + replaceText ) ;
-                                }
-                                matches[i].innerHTML = replaceText  ;
+                            let pageContent = await page.content();
+                            if (this.debugLevel >= 2)  {
+                                console.log( "Writing content of the page to debug-html.txt ") ;
+                                let fs = require("fs") ;
+
+                                fs.writeFile("debug-before-html.txt", pageContent, (err) => {
+                                    if (err) throw err;
+
+                                    console.log("The file debug-before-html.txt was succesfully saved!");
+                                });
 
                             }
-                        }
+                            // Create document (npm module 'jsdom')
+                            const { document } = (new JSDOM(pageContent)).window;
+                            let replaceText = newElementContent ;
+                            if ( newElementTag ) {
+                                let newElement = document.createElement(newElementTag);
+                                newElement.innerHTML = newElementContent;
+                                replaceText = newElement.outerHTML ;
+                            }
 
 
-                        await page.setContent(document.documentElement.innerHTML);
-                        await page.waitForSelector('body');
+                            // let node = document.getElementById(elementToReplace);
+                            let matches = document.querySelectorAll( elementToReplace);
+                            if ( matches.length < 1 ) {
+                                if (this.debugLevel >= 1)  {
+                                    console.log( "Element " + elementToReplace + " NOT found (and NOT replaced )") ;
+                                }
+                            }
+                            for (i=0; i<matches.length; i++) {
+                                if( matches[i].parentNode ) {
+                                    if (this.debugLevel >= 2)  {
+                                        console.log( "Element " + elementToReplace + " found and replaced") ;
+                                        console.log( "Before: " + matches[i].outerHTML ) ;
+                                        console.log( "After: " + replaceText ) ;
+                                    }
+                                    matches[i].outerHTML = replaceText  ;
+
+                                } else {
+                                    if (this.debugLevel >= 1)  {
+                                        console.log( "Element " + elementToReplace + " found but has no parent Node . Could not be  replaced") ;
+                                    }
+                                }
+                            }
+
+
+                            await page.setContent(document.documentElement.innerHTML);
+                            await page.waitForSelector('body');
+                            if (this.debugLevel >= 2)  {
+                                console.log( "Writing content of the Result page to debug-after-html.txt ") ;
+                                let fs = require("fs") ;
+
+                                fs.writeFile("debug-after-html.txt", document.documentElement.innerHTML , (err) => {
+                                    if (err) throw err;
+
+                                    console.log("The file debug-after-html.txt was succesfully saved!");
+                                });
+
+                            }
+
+
                     }catch(err) {
                         console.log(err) ;
                     }
