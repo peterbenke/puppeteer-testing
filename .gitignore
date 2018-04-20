@@ -10,4 +10,5 @@ tests/comparisonFailures/
 tests/comparisonResults/
 
 tests/demotest/*
+tests/demosuite/images/*
 !tests/demotest/test.js
